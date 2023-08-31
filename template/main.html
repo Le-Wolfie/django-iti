@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Project List</h1>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Project Owner</th>
+                <th>Project Target</th>
+                <th>Amount Funded</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td>{{ project.title }}</td>
+                <td>{{ project.details }}</td>
+                <td>{{ project.owner }}</td>
+                <td>{{ project.target }} EGP</td>
+                <td>{{ project.amount_donated}} EGP</td>
+                <td>{{ project.start_time }}</td>
+                <td>{{ project.end_time }}</td>
+                {% if user == project.owner %}
+                <td class="text-center">
+                    <div class="btn-group">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger me-2" name="project-id" value="{{ project.id }}">Delete</button>
+                        </form>
+                        <form method="get" action="{% url 'edit_project' project.id %}">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </td>
+                {% else %}
+                <td class="text-center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="number" style="margin-bottom: 5px;" name="donation_amount" placeholder="Donate Here" >
+                        <button type="submit" class="btn btn-success" name="project-id" value=" {{project.id}}">Donate</button>
+                    </form>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
