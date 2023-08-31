@@ -4,6 +4,13 @@
 
 {% block content %}
 <h1 class="mb-4">Project List</h1>
+<div class="search-bar">
+    <div class="input-group mb-3">
+        <input type="datetime-local" class="form-control" name="search" placeholder="Search for a project" id="search-content">
+        <button class="btn btn-outline-secondary" type="submit" id="search-btn">Search</button>
+    </div>
+   
+</div>
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
@@ -26,8 +33,8 @@
                 <td>{{ project.owner }}</td>
                 <td>{{ project.target }} EGP</td>
                 <td>{{ project.amount_donated}} EGP</td>
-                <td>{{ project.start_time }}</td>
-                <td>{{ project.end_time }}</td>
+                <td>{{ project.start_time|date:"Y-m-d H:i" }}</td>
+                <td>{{ project.end_time|date:"Y-m-d H:i" }}</td>
                 {% if user == project.owner %}
                 <td class="text-center">
                     <div class="btn-group">
@@ -54,4 +61,35 @@
     </table>
 </div>
 
+<script>
+    const table_body = document.getElementsByTagName("tbody");
+    const search_bar = document.getElementById("search-content");
+    search_bar.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("search-btn").click();
+        }
+    });
+    const search_btn = document.getElementById("search-btn");
+    search_btn.addEventListener("click", (e) => {
+        const search_bar_content = search_bar.value;
+        const table_rows = table_body[0].getElementsByTagName("tr");
+        for (let i = 0; i < table_rows.length; i++) {
+            const table_data = table_rows[i].getElementsByTagName("td");
+            const start_date = table_data[5];
+            const end_date = table_data[6];
+            // "Sept. 8, 2023, 5:52 p.m." format example, we need to parse this
+            const start_date_time = Date.parse(start_date.innerText);
+            const end_date_time = Date.parse(end_date.innerText);
+            const search_date_time = Date.parse(search_bar_content);
+            if((search_date_time < end_date_time && search_date_time > start_date_time) || search_bar_content == ""){
+                table_rows[i].style.display = "";
+            } else {
+                table_rows[i].style.display = "none";
+            }
+            
+            
+        }
+    })
+</script>
 {% endblock %}
