@@ -1,1 +1,5 @@
-I HAVE COMMENTED OUT THE BUILT IN DJANGO AUTH URLS OK
+<!--i commented out the built-in django auth urls --> 
+
+## make sure to update settings.py with your actual postgre user and db then execute 
+`python manage.py makemigrations` 
+`python manage.py migrate`
