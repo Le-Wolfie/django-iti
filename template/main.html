@@ -51,8 +51,13 @@
                 <td class="text-center">
                     <form method="post">
                         {% csrf_token %}
-                        <input type="number" style="margin-bottom: 5px;" name="donation_amount" placeholder="Donate Here" >
-                        <button type="submit" class="btn btn-success" name="project-id" value=" {{project.id}}">Donate</button>
+                        {% if donation_error_id == project.id %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ donation_error_msg }}
+                        </div>
+                        {% endif %}
+                        <input type="number" min="1" style="margin-bottom: 5px;" name="donation_amount" placeholder="Donate Here" >
+                        <button type="submit" class="btn btn-success" name="project-id" value="{{ project.id }}">Donate</button>
                     </form>
                 {% endif %}
             </tr>
@@ -87,8 +92,6 @@
             } else {
                 table_rows[i].style.display = "none";
             }
-            
-            
         }
     })
 </script>

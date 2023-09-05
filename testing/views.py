@@ -12,6 +12,8 @@ from .models import Project
 @login_required(login_url="/login")
 def index(request):
     projects = Project.objects.all()
+    donation_error_msg = None
+    donation_error_id = None
     # html doesn't support put or delete, so i made two post requests each for deleting and donating (depending on conditions satisified)
     if request.method == "POST":
         project_id = request.POST.get("project-id")
@@ -21,12 +23,17 @@ def index(request):
             return redirect('/')
         else:  # request to donate
             amount_donated = request.POST.get("donation_amount")
-            project.amount_donated += int(amount_donated)
-            project.save()
-            return redirect('/')
+            if int(amount_donated) > 0:
+                project.amount_donated += int(amount_donated)
+                project.save()
+                return redirect('/')
+            else:
+                donation_error_msg = "Donation amount must be greater than 0"
+                donation_error_id = project_id
+                print(donation_error_id)
 
     # render all projects
-    return render(request, 'main.html', {"projects": projects})
+    return render(request, 'main.html', {"projects": projects, "donation_error_msg": donation_error_msg, "donation_error_id": donation_error_id})
 
 
 @login_required(login_url="/login")
@@ -74,6 +81,3 @@ def sign_up(request):
         form = RegistrationForm()
 
     return render(request, 'registration/sign_up.html', {'form': form})
-
-
-
